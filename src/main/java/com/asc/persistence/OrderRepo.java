@@ -4,6 +4,7 @@ import com.asc.data.StaffMember;
 import com.asc.data.Order;
 import com.asc.data.Customer;
 import com.asc.data.Item;
+import com.asc.data.NonExistentStaffException;
 import com.asc.data.OrderList;
 import com.asc.data.OrderList;
 import com.asc.data.StaffList;
@@ -25,6 +26,9 @@ public class OrderRepo implements Repo {
     /**
      * Default constructor
      *
+     * @param dbUrl
+     * @param dbPassword
+     * @param dbUser
      * @throws SQLException if we cannot connect to the database
      */
     public OrderRepo(String dbUrl, String dbPassword, String dbUser) throws SQLException {
@@ -63,9 +67,13 @@ public class OrderRepo implements Repo {
                 if (rs.getDate("ORDERDATE") != null) order.setOrderDate(rs.getDate("ORDERDATE").toLocalDate());
                 System.out.println("order repo 4");
                 StaffList staffList = StaffList.getInstance();
-                StaffMember staff = staffList.get(rs.getInt("STAFFID"));
-System.out.println("order repo 5");
-                order.setStaffMember(staff);
+                try {
+                    StaffMember staff = staffList.get(rs.getInt("STAFFID"));
+                    order.setStaffMember(staff);
+                } catch (NonExistentStaffException ex) {
+                    order.setStaffMember(null);
+                }
+                
 System.out.println("order repo 6");
                 Customer customer = new Customer();
                 customer.setAddress(rs.getString("CUSTOMERADDRESS"));

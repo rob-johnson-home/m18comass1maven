@@ -20,6 +20,9 @@ public class StaffRepo implements Repo {
     /**
      * Default constructor
      *
+     * @param dbUrl
+     * @param dbPassword
+     * @param dbUser
      * @throws SQLException if we cannot connect to the database
      */
     public StaffRepo( String dbUrl, String dbPassword, String dbUser) throws SQLException {

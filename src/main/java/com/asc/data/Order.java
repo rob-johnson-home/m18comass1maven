@@ -8,84 +8,163 @@ import java.util.*;
  * @author rob johnson
  */
 public class Order {
+
+    /**
+     *
+     * @return
+     */
     public LocalDate getOrderDate() {
         return orderDate;
     }
 
+    /**
+     *
+     * @param orderDate
+     */
     public void setOrderDate(LocalDate orderDate) {
         this.orderDate = orderDate;
     }
 
+    /**
+     *
+     * @return
+     */
     public LocalDate getFullfillDate() {
         return fullfillDate;
     }
 
+    /**
+     *
+     * @param fullfillDate
+     */
     public void setFullfillDate(LocalDate fullfillDate) {
         this.fullfillDate = fullfillDate;
     }
 
+    /**
+     *
+     * @return
+     */
     public LocalDate getCollectDate() {
         return collectDate;
     }
 
+    /**
+     *
+     * @param collectDate
+     */
     public void setCollectDate(LocalDate collectDate) {
         this.collectDate = collectDate;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isPaid() {
         return isPaid;
     }
 
+    /**
+     *
+     * @param paid
+     */
     public void setPaid(boolean paid) {
         isPaid = paid;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isFulfilled() {
         return isFulfilled;
     }
 
+    /**
+     *
+     * @param fulfilled
+     */
     public void setFulfilled(boolean fulfilled) {
         isFulfilled = fulfilled;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isCollected() {
         return isCollected;
     }
 
+    /**
+     *
+     * @param collected
+     */
     public void setCollected(boolean collected) {
         isCollected = collected;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getOrderId() {
         return orderId;
     }
 
+    /**
+     *
+     * @param orderId
+     */
     public void setOrderId(int orderId) {
         this.orderId = orderId;
     }
 
-
-
+    /**
+     *
+     * @return
+     */
     public Customer getCustomer() {
         return customer;
     }
 
+    /**
+     *
+     * @param customer
+     */
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 
+    /**
+     *
+     * @return
+     */
     public StaffMember getStaffMember() {
         return staffMember;
     }
 
+    /**
+     *
+     * @param staffMember
+     */
     public void setStaffMember(StaffMember staffMember) {
         this.staffMember = staffMember;
     }
 
+    /**
+     *
+     * @return
+     */
     public ArrayList<OrderLineItem> getItems() {
         return items;
     }
 
+    /**
+     *
+     * @param items
+     */
     public void setItems(ArrayList<OrderLineItem> items) {
         this.items = items;
     }
@@ -159,7 +238,7 @@ public class Order {
     
 
     /**
-     * @param StaffMember staff
+     * @param staff
      */
     public void takeOwnership( StaffMember staff) {
         // TODO implement here

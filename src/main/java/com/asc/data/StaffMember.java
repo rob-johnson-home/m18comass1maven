@@ -7,6 +7,9 @@ import java.util.*;
  */
 public class StaffMember {
 
+    /**
+     *
+     */
     public int id;
 
     /**
@@ -20,18 +23,34 @@ public class StaffMember {
      */
     private String name;
 
+    /**
+     *
+     * @return
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     *
+     * @param id
+     */
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     *
+     * @param name
+     */
     public void setName(String name) {
         this.name = name;
     }

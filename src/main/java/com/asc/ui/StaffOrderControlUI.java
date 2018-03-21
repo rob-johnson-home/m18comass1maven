@@ -1,6 +1,8 @@
 package com.asc.ui;
 
+import com.asc.data.NonExistentOrderException;
 import com.asc.control.StaffOrderController;
+import com.asc.data.NonExistentStaffException;
 import com.asc.ui.Menu;
 import java.util.*;
 
@@ -28,7 +30,8 @@ public class StaffOrderControlUI {
         menuChoices.put("B","View Order");
         menuChoices.put("C","View All Open Orders");
         menuChoices.put("D","Fulfill Order");
-        menuChoices.put("E","Print Order");
+        menuChoices.put("E","Print Order Pick List");
+        
         menuChoices.put("Z","Quit");
 
         ui = new Menu(title,menuChoices);
@@ -47,16 +50,20 @@ public class StaffOrderControlUI {
                 case "Z":
                     done = true;
                     break;
-                case "A":
-                    {
-                    int id = ui.demandInt("Please enter the order id");
-                    staffOrderController.checkOrder(id);
-                    break;
-                    }
+//                case "A":
+//                    {
+//                    int id = ui.demandInt("Please enter the order id");
+//                    staffOrderController.checkOrder(id);
+//                    break;
+//                    }
                 case "B":
                     {
                     int id = ui.demandInt("Please enter the order id");
-                    staffOrderController.viewOrder(id);
+                    try {
+                        staffOrderController.viewOrder(id);
+                    } catch (NonExistentOrderException ex) {
+                        System.out.println("That order ID does not exist");
+                    }
                     break;
                     }
                 case "C":
@@ -65,14 +72,25 @@ public class StaffOrderControlUI {
                 case "D":
                     {
                     int id = ui.demandInt("Please enter the order id");
-                    staffOrderController.fulfillOrder(id);
-                    staffOrderController.printOrderLabel(id);
+                    int staffId = ui.demandInt("Please choose the staff member");
+                    try {
+                        staffOrderController.fulfillOrder(id,staffId);
+                        staffOrderController.getOrderLabel(id);
+                    } catch (NonExistentOrderException ex) {
+                        System.out.println("That order ID does not exist");
+                    } catch (NonExistentStaffException ex) {
+                        System.out.println("That staff ID does not exist");
+                    }
                     break;
                     }
                 case "E":
                     {
                     int id = ui.demandInt("Please enter the order id");
-                    staffOrderController.printOrder(id);
+                    try {
+                        staffOrderController.printOrderPickList(id);
+                    } catch (NonExistentOrderException ex) {
+                        System.out.println("That order does not exist");
+                    }
                     break;
                     }
             }

@@ -19,6 +19,10 @@ public class StockList {
                 
     }
 
+    /**
+     *
+     * @return
+     */
     public static StockList getInstance() {
         if (instance == null) {
             instance = new StockList();
@@ -40,17 +44,27 @@ public class StockList {
         // TODO implement here
     }
     
+    /**
+     *
+     * @param item
+     */
     public void add(Item item) {
         stock.add(item);
     }
 
     /**
      * @param id
+     * @throws NonExsistentItem if id is null or does not exist
      */
-    public void get(String id) {
-        // TODO implement here
+    public Item get(int id) throws NonExistentItemException {
+        if (stock.indexOf(id) == -1) throw new NonExistentItemException();
+        return stock.get(id);
     }
     
+    /**
+     *
+     * @return
+     */
     public ArrayList<Item> get() {
         
         return stock;

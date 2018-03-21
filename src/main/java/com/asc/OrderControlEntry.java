@@ -8,6 +8,7 @@ import com.asc.persistence.StaffRepo;
 import com.asc.persistence.OrderRepo;
 import com.asc.persistence.StockRepo;
 import com.asc.ui.StaffOrderControlUI;
+import com.asc.ui.WebOrderControlUI;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.sql.SQLException;
@@ -25,6 +26,7 @@ public class OrderControlEntry {
     String dbUser = "johns418";
     String dbPassword = "johns418";
     
+    static WebOrderControlUI wo;
     
     /**
      * Default constructor
@@ -50,6 +52,16 @@ public class OrderControlEntry {
             System.out.println("Exception : " + e.getStackTrace());
             System.exit(0);
         }
+        
+        // lauch web interface in background
+        wo = new WebOrderControlUI();
+        Thread th = new Thread(wo);
+        th.start();
+        
+        
+        
+        
+      
 
     }
 
@@ -62,7 +74,7 @@ public class OrderControlEntry {
         OrderControlEntry e = new OrderControlEntry();
         
             
-        e.introduceOrderToSystem();
+        //e.introduceOrderToSystem();
         //e.CreateOrderJson();
         
         StaffOrderControlUI orderControlUI = new StaffOrderControlUI(); //
@@ -70,6 +82,7 @@ public class OrderControlEntry {
         orderControlUI.executeTask();
         
         e.writeAndCloseDb();
+        wo.setStop(Boolean.TRUE);
         
     }
 
@@ -104,6 +117,9 @@ public class OrderControlEntry {
         ol.add(o);
     }
 
+    /**
+     *
+     */
     public void CreateOrderJson() {
         Customer c = new Customer();
         c.setName("Rob");

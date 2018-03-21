@@ -17,6 +17,10 @@ public class StaffList {
         staff = new ArrayList<StaffMember>();
     }
 
+    /**
+     *
+     * @return
+     */
     public static StaffList getInstance() {
         if (instance == null) {
             instance = new StaffList();
@@ -29,7 +33,7 @@ public class StaffList {
     private ArrayList<StaffMember> staff;
 
     /**
-     * @param name
+     * @param staffMember
      */
     public void add(StaffMember staffMember) {
         staff.add(staffMember);
@@ -37,10 +41,15 @@ public class StaffList {
 
     /**
      * @param id
+     * @return StaffMember
+     * @throws NonExistentStaffException is staffId not found
      */
-    public StaffMember get(int id) {
-        // TODO implement here
-        return null;
+    public StaffMember get(int id) throws NonExistentStaffException {
+        if (staff.indexOf(id) == -1) {
+            throw new NonExistentStaffException();
+        }
+        
+        return staff.get(id);
     }
 
 }

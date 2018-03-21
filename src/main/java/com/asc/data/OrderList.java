@@ -14,7 +14,7 @@ public class OrderList {
      * Default constructor
      */
     protected OrderList() {
-        orders = new ArrayList<Order>();
+        orders = new Hashtable<Integer,Order>();
     }
 
     /**
@@ -31,13 +31,14 @@ public class OrderList {
     /**
      *
      */
-    private ArrayList<Order> orders;
+    private Hashtable<Integer,Order> orders;
 
     /**
      * @param order
+     * @throws NullPointerException is id is null
      */
     public void add(Order order) {
-        orders.add(order);
+        orders.put(order.getOrderId(), order);
     }
 
     /**
@@ -52,14 +53,13 @@ public class OrderList {
      *
      * @param orderId
      * @return order or null if no order found
+     * @throws NonExistentOrderException if id is not found
      */
-    public Order get(int orderId) {
-        for (Order o : orders) {
-            if (o.getOrderId() == orderId) {
-                return o;
-            }
+    public Order get(int orderId) throws NonExistentOrderException{
+        if (orders.containsKey(orderId)) {
+            return orders.get(orderId);
         }
-        return null;
+        throw new NonExistentOrderException();
     }
 
     /**
@@ -69,9 +69,9 @@ public class OrderList {
      */
     public ArrayList<Order> getOpen() {
         ArrayList<Order> rv = new ArrayList<>();
-        for (Order o : orders) {
-            if (!o.isCollected()) {
-                rv.add(o);
+        for (Integer i : orders.keySet()) {
+            if (!orders.get(i).isCollected()) {
+                rv.add(orders.get(i));
             }
         }
         return rv;
@@ -84,10 +84,7 @@ public class OrderList {
      */
     public ArrayList<Order> get() {
         ArrayList<Order> rv = new ArrayList<>();
-        for (Order o : orders) {
-
-            rv.add(o);
-        }
+        rv.addAll(orders.values());
         return rv;
     }
 

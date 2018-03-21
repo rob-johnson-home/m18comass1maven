@@ -19,6 +19,9 @@ public class StockRepo implements Repo {
     /**
      * Default constructor
      *
+     * @param dbUrl
+     * @param dbPassword
+     * @param dbUser
      * @throws SQLException if we cannot connect to the database
      */
     public StockRepo(String dbUrl, String dbPassword, String dbUser) throws SQLException {
