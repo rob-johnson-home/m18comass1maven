@@ -18,15 +18,10 @@ public class OrderPrintUI {
     /**
      * @param order
      */
-    public void PrintSummary(Order order) {
-        // TODO implement here
+    public void print(PrintableOrder printable) {
+        printable.print();;
     }
 
-    /**
-     * @param order
-     */
-    public void PrintPickList(Order order) {
-        // TODO implement here
-    }
+    
 
 }

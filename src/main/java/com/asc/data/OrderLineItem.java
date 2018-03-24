@@ -1,11 +1,13 @@
 package com.asc.data;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author rob johnson
  */
 public class OrderLineItem {
+    private static final Logger LOGGER = Logger.getLogger( OrderLineItem.class.getName() );
 
     /**
      * Default constructor
@@ -27,6 +29,20 @@ public class OrderLineItem {
      * 
      */
     private int itemId;
+    
+    /**
+     * 
+     */
+    
+    private int OrderId;
+
+    public int getOrderId() {
+        return OrderId;
+    }
+
+    public void setOrderId(int OrderId) {
+        this.OrderId = OrderId;
+    }
 
     /**
      *

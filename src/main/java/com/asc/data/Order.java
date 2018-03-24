@@ -3,11 +3,13 @@ package com.asc.data;
 import com.asc.ui.PrintableOrder;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author rob johnson
  */
 public class Order {
+    private static final Logger LOGGER = Logger.getLogger( Order.class.getName() );
 
     /**
      *

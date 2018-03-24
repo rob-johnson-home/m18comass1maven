@@ -6,6 +6,7 @@
 package com.asc.ui;
 
 import com.asc.control.OrderController;
+import com.asc.data.Item;
 import com.asc.data.Order;
 import com.asc.data.OrderList;
 import com.google.gson.Gson;
@@ -22,12 +23,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author rob
  */
 public class WebOrderControlUI implements Runnable, HttpHandler {
+    private static final Logger LOGGER = Logger.getLogger( WebOrderControlUI.class.getName() );
 
     private String url = "http://localhost:8080";
     private int timeout = 360000;
@@ -41,13 +45,13 @@ public class WebOrderControlUI implements Runnable, HttpHandler {
 
     public void run() {
         try {
-            System.out.println("********   web order service ********");
+            LOGGER.log( Level.FINE, "********   web order service ********");
             HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
             server.createContext("/order", this);
             server.setExecutor(null); // creates a default executor
-            System.out.println("starting server");
+            LOGGER.log( Level.FINE, "starting server");
             server.start();
-            System.out.println("server started");
+            LOGGER.log( Level.FINE, "server started");
             // wait to be shut down
             while (!stop) {
                 Thread.sleep(1000);
@@ -55,8 +59,8 @@ public class WebOrderControlUI implements Runnable, HttpHandler {
             server.stop(0);
 
         } catch (IOException ex) {
-            System.out.println("IO Exception in server startup.");
-            System.out.println("Exception : " + ex);
+            LOGGER.log( Level.SEVERE, "IO Exception in server startup.");
+            LOGGER.log( Level.SEVERE, "Exception : " + ex);
             System.exit(0);
         } catch (InterruptedException e) {
             // good practice
@@ -73,7 +77,7 @@ public class WebOrderControlUI implements Runnable, HttpHandler {
     @Override
     public void handle(HttpExchange t) throws IOException {
         // read input
-        System.out.println("Handling request");
+        LOGGER.log( Level.FINE, "Handling request");
         BufferedReader br = new BufferedReader(new InputStreamReader(t.getRequestBody()));
         StringBuilder sb = new StringBuilder();
         String line;
@@ -81,12 +85,14 @@ public class WebOrderControlUI implements Runnable, HttpHandler {
             sb.append(line + "\n");
         }
         br.close();
-        System.out.println(sb.toString());
+        LOGGER.log( Level.FINE, sb.toString());
         OrderController oc = new OrderController();
         byte[] response;
         if (oc.newOrder(sb.toString())) {
+            LOGGER.log( Level.FINE, "Order Accepted");
             response = "Order Accepted".getBytes();
         } else {
+            LOGGER.log( Level.FINE, "Order Rejected");
             response = "Order Rejected".getBytes();
         }
 

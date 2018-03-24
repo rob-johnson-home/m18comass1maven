@@ -1,12 +1,14 @@
 package com.asc.data;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author rob johnson
  */
 public class Customer {
 
+    private static final Logger LOGGER = Logger.getLogger( Customer.class.getName() );
     /**
      *
      * @return

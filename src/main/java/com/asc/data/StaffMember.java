@@ -1,11 +1,13 @@
 package com.asc.data;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author rob johnson
  */
 public class StaffMember {
+    private static final Logger LOGGER = Logger.getLogger( StaffMember.class.getName() );
 
     /**
      *

@@ -3,11 +3,14 @@ package com.asc.data;
 import com.asc.data.Item;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author rob johnson
  */
 public class StockList {
+    private static final Logger LOGGER = Logger.getLogger( StockList.class.getName() );
 
     private static StockList instance = null;
     /**
@@ -57,6 +60,8 @@ public class StockList {
      * @throws NonExsistentItem if id is null or does not exist
      */
     public Item get(int id) throws NonExistentItemException {
+        LOGGER.log(Level.FINE,"Getting item id : " + id );
+                
         if (stock.indexOf(id) == -1) throw new NonExistentItemException();
         return stock.get(id);
     }

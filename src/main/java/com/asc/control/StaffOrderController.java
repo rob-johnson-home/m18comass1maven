@@ -1,6 +1,7 @@
 package com.asc.control;
 
 
+import com.asc.TestJsonOrderClient;
 import com.asc.data.NonExistentOrderException;
 import com.asc.data.NonExistentStaffException;
 import com.asc.data.Order;
@@ -14,17 +15,21 @@ import com.asc.ui.OrderPrintUI;
 import com.asc.ui.StaffOrderControlUI;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author rob johnson
  */
 public class StaffOrderController {
 
+        private static final Logger LOGGER = Logger.getLogger( StaffOrderController.class.getName() );
+
     /**
      * Default constructor
      */
     public StaffOrderController() {
-        
+        LOGGER.setLevel(Level.FINE);
     }
 
     /**
@@ -113,6 +118,7 @@ public class StaffOrderController {
         if (o == null) {
             throw new NonExistentOrderException();
         }
+        LOGGER.log(Level.FINE, "creating label");
         OrderLabel ol = new OrderLabel(o);
         return ol;
     }
@@ -123,12 +129,12 @@ public class StaffOrderController {
      * @throws NonExistentOrderException if id is not in OrderList
      * 
      */
-    public void printOrderPickList(int id) throws NonExistentOrderException {
+    public OrderPickList getOrderPickList(int id) throws NonExistentOrderException {
         Order o = OrderList.getInstance().get(id);
         if (o == null) {
             throw new NonExistentOrderException();
         }
-        OrderPickList opl = new OrderPickList();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.    }
+        OrderPickList opl = new OrderPickList(o);
+        return opl;
     }
 }

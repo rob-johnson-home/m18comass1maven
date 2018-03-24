@@ -2,11 +2,13 @@ package com.asc.data;
 
 import com.asc.data.Order;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author rob johnson
  */
 public class OrderList {
+    private static final Logger LOGGER = Logger.getLogger( OrderList.class.getName() );
 
     private static OrderList instance = null;
 

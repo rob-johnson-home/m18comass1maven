@@ -1,14 +1,18 @@
 package com.asc.ui;
 
+import com.asc.data.Item;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author rob johnson
  */
 public class Menu {
+    private static final Logger LOGGER = Logger.getLogger( Menu.class.getName() );
 
     /**
      * Default constructor
@@ -64,7 +68,7 @@ public class Menu {
                     menuChoice = input.toUpperCase();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.log( Level.SEVERE,e.getMessage());
             }
 
             if (menu.containsKey(menuChoice)) {
@@ -95,7 +99,7 @@ public class Menu {
             } catch (NumberFormatException e) {
                 System.out.println("only a number please!");
             }catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.log( Level.SEVERE,e.getMessage());
             }
         }
         return i;

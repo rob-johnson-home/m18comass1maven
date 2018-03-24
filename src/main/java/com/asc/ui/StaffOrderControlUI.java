@@ -2,14 +2,18 @@ package com.asc.ui;
 
 import com.asc.data.NonExistentOrderException;
 import com.asc.control.StaffOrderController;
+import com.asc.data.Item;
 import com.asc.data.NonExistentStaffException;
 import com.asc.ui.Menu;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author rob johnson
  */
 public class StaffOrderControlUI {
+    private static final Logger LOGGER = Logger.getLogger( StaffOrderControlUI.class.getName() );
 
     private final Menu ui;
     private HashMap<String, String> menuChoices;
@@ -31,7 +35,7 @@ public class StaffOrderControlUI {
         menuChoices.put("C","View All Open Orders");
         menuChoices.put("D","Fulfill Order");
         menuChoices.put("E","Print Order Pick List");
-        
+        menuChoices.put("F","Print Order Label");
         menuChoices.put("Z","Quit");
 
         ui = new Menu(title,menuChoices);
@@ -62,7 +66,7 @@ public class StaffOrderControlUI {
                     try {
                         staffOrderController.viewOrder(id);
                     } catch (NonExistentOrderException ex) {
-                        System.out.println("That order ID does not exist");
+                        System.out.println( "That order ID does not exist");
                     }
                     break;
                     }
@@ -77,9 +81,9 @@ public class StaffOrderControlUI {
                         staffOrderController.fulfillOrder(id,staffId);
                         staffOrderController.getOrderLabel(id);
                     } catch (NonExistentOrderException ex) {
-                        System.out.println("That order ID does not exist");
+                        System.out.println( "That order ID does not exist");
                     } catch (NonExistentStaffException ex) {
-                        System.out.println("That staff ID does not exist");
+                        System.out.println( "That staff ID does not exist");
                     }
                     break;
                     }
@@ -87,12 +91,26 @@ public class StaffOrderControlUI {
                     {
                     int id = ui.demandInt("Please enter the order id");
                     try {
-                        staffOrderController.printOrderPickList(id);
+                        OrderPickList opl = staffOrderController.getOrderPickList(id);
+                        OrderPrintUI printer = new OrderPrintUI();
+                        printer.print(opl);
                     } catch (NonExistentOrderException ex) {
-                        System.out.println("That order does not exist");
+                        System.out.println( "That order does not exist");
                     }
                     break;
                     }
+                case "F":
+                {
+                    int id = ui.demandInt("Please enter the order id");
+                    try {
+                        OrderLabel ol = staffOrderController.getOrderLabel(id);
+                        OrderPrintUI printer = new OrderPrintUI();
+                        printer.print(ol);
+                    } catch (NonExistentOrderException ex) {
+                        System.out.println( "That order does not exist");
+                    }
+                    break;
+                }
             }
         }
     }

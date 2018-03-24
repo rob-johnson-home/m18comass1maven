@@ -1,6 +1,7 @@
 package com.asc.persistence;
 
 import com.asc.data.Assistant;
+import com.asc.data.Item;
 import com.asc.data.Manager;
 import com.asc.data.StaffList;
 import com.asc.data.StaffMember;
@@ -10,11 +11,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author rob johnson
  */
 public class StaffRepo implements Repo {
+    private static final Logger LOGGER = Logger.getLogger( StaffRepo.class.getName() );
 
     Connection conn;
     /**
@@ -29,7 +33,7 @@ public class StaffRepo implements Repo {
 
         // Connect to DB
         conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-        System.out.println("Connected to database...");
+        LOGGER.log( Level.FINE, "Connected to database...");
 
     }
 
@@ -38,8 +42,8 @@ public class StaffRepo implements Repo {
      */
     public void read() {
         StaffList staffList = StaffList.getInstance();
-        System.out.println("staff  list = " + staffList);
-        System.out.println("Reading from the staff database... ");
+        LOGGER.log( Level.FINE, "staff  list = " + staffList);
+        LOGGER.log( Level.FINE, "Reading from the staff database... ");
 
         try {
         Statement st = conn.createStatement();
@@ -47,11 +51,9 @@ public class StaffRepo implements Repo {
         ResultSet rs = null;
         String sql = "SELECT * FROM STAFF";
         rs = st.executeQuery(sql);
-System.out.println("1");
         StaffMember staff = null;
 
         while (rs.next()) {
-            System.out.println("2");
             if (rs.getBoolean("ISMANAGER")) {
                 staff = new Manager();
                 staff.setId(rs.getInt("ID"));
@@ -61,21 +63,16 @@ System.out.println("1");
                 staff.setId(rs.getInt("ID"));
                 staff.setName(rs.getString("NAME"));
             }
-            System.out.println("Adding to stafflist");
             staffList.add(staff);
-            System.out.println("Added to stafflist");
         }
 
         
-System.out.println("3");
         rs.close();
-System.out.println("4");
         st.close();
         } catch (SQLException ex) {
-            System.out.println("SQLException failed ! : " + ex);
+            LOGGER.log( Level.SEVERE, "SQLException failed ! : " + ex);
         }
-System.out.println("5");
-        System.out.println("staff..." + staffList);
+        LOGGER.log( Level.FINE, "staff..." + staffList);
     }
 
     /**

@@ -8,11 +8,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author rob johnson
  */
 public class StockRepo implements Repo {
+    private static final Logger LOGGER = Logger.getLogger( StockRepo.class.getName() );
 
     Connection conn;
 
@@ -28,7 +31,7 @@ public class StockRepo implements Repo {
 
         // Connect to DB
         conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-        System.out.println("Connected to database...");
+        LOGGER.log( Level.FINE, "Connected to database...");
 
     }
 
@@ -38,7 +41,7 @@ public class StockRepo implements Repo {
     public void read() {
         StockList stockList = StockList.getInstance();
 
-        System.out.println("Reading from the stock database... ");
+        LOGGER.log( Level.FINE, "Reading from the stock database... ");
 
         try {
             Statement st = conn.createStatement();
@@ -63,9 +66,9 @@ public class StockRepo implements Repo {
             rs.close();
             st.close();
         } catch (SQLException ex) {
-            System.out.println("SQLException failed ! : " + ex);
+            LOGGER.log( Level.SEVERE, "SQLException failed ! : " + ex);
         }
-        System.out.println("staff..." + stockList);
+        LOGGER.log( Level.FINE, "staff..." + stockList);
     }
 
     /**

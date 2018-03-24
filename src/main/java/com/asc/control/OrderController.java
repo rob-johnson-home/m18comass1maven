@@ -5,16 +5,21 @@ import com.asc.data.OrderList;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author rob johnson
  */
 public class OrderController {
 
+    private static final Logger LOGGER = Logger.getLogger( OrderController.class.getName() );
+    
     /**
      * Default constructor
      */
     public OrderController() {
+        LOGGER.setLevel(Level.FINE);
     }
 
     /**
@@ -25,7 +30,9 @@ public class OrderController {
         try {
             Gson g = new Gson();
             Order o = g.fromJson(orderJson, Order.class);
+            LOGGER.log( Level.FINE,"New Order : " + o.getItems());
             OrderList.getInstance().add(o);
+            
             return true;
         } catch (JsonSyntaxException ex) {
             // probably couldn't parse it properly

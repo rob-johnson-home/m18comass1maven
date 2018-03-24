@@ -7,5 +7,7 @@ import java.util.*;
  * @author rob
  */
 public interface PrintableOrder {
+    
+    public void print();
 
 }

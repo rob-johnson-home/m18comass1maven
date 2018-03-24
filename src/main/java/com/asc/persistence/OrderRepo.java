@@ -5,6 +5,7 @@ import com.asc.data.Order;
 import com.asc.data.Customer;
 import com.asc.data.Item;
 import com.asc.data.NonExistentStaffException;
+import com.asc.data.OrderLineItem;
 import com.asc.data.OrderList;
 import com.asc.data.OrderList;
 import com.asc.data.StaffList;
@@ -15,11 +16,14 @@ import java.text.DateFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author rob johnson
  */
 public class OrderRepo implements Repo {
+    private static final Logger LOGGER = Logger.getLogger( OrderRepo.class.getName() );
 
     Connection conn;
 
@@ -33,9 +37,10 @@ public class OrderRepo implements Repo {
      */
     public OrderRepo(String dbUrl, String dbPassword, String dbUser) throws SQLException {
 
+        LOGGER.setLevel(Level.FINE);
         // Connect to DB
         conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-        System.out.println("Connected to database...");
+        LOGGER.log( Level.FINE, "Connected to database...");
 
     }
 
@@ -45,7 +50,7 @@ public class OrderRepo implements Repo {
     @Override
     public void read() {
         OrderList orderList = OrderList.getInstance();
-        System.out.println("Reading from the orders database... ");
+        LOGGER.log( Level.FINE, "Reading from the orders database... ");
         try {
             Statement st = conn.createStatement();
 
@@ -56,16 +61,12 @@ public class OrderRepo implements Repo {
             while (rs.next()) {
                 Order order = new Order();
                 order.setOrderId(rs.getInt("ID"));
-                System.out.println("order repo 1");
                 if (rs.getDate("COLLECTDATE") != null) order.setCollectDate(rs.getDate("COLLECTDATE").toLocalDate());
                 order.setCollected(rs.getBoolean("ISCOLLECTED"));
                 order.setFulfilled(rs.getBoolean("ISFULFILLED"));
-                System.out.println("order repo 2");
                 if (rs.getDate("FULFILLDATE") != null) order.setFullfillDate(rs.getDate("FULFILLDATE").toLocalDate());
                 order.setPaid(rs.getBoolean("ISPAID"));
-                System.out.println("order repo 3 + " + rs.getDate("ORDERDATE").toLocalDate());
                 if (rs.getDate("ORDERDATE") != null) order.setOrderDate(rs.getDate("ORDERDATE").toLocalDate());
-                System.out.println("order repo 4");
                 StaffList staffList = StaffList.getInstance();
                 try {
                     StaffMember staff = staffList.get(rs.getInt("STAFFID"));
@@ -74,14 +75,13 @@ public class OrderRepo implements Repo {
                     order.setStaffMember(null);
                 }
                 
-System.out.println("order repo 6");
                 Customer customer = new Customer();
                 customer.setAddress(rs.getString("CUSTOMERADDRESS"));
                 customer.setEmail(rs.getString("CUSTOMEREMAIL"));
                 customer.setName(rs.getString("CUSTOMERNAME"));
                 customer.setPhone(rs.getString("CUSTOMERPHONE"));
                 order.setCustomer(customer);
-System.out.println("order repo 7");
+                readLineItems(order);
                 orderList.add(order);
 
             }
@@ -89,9 +89,37 @@ System.out.println("order repo 7");
             st.close();
 
         } catch (SQLException ex) {
-            System.out.println("SQLException failed ! : " + ex);
+            LOGGER.log( Level.SEVERE, "SQLException failed ! : " + ex);
         }
-        System.out.println("orders..." + orderList);
+     
+    }
+    
+    private void readLineItems(Order order) {
+        LOGGER.log( Level.FINE, "Reading from the orderlineitems database... ");
+        try {
+            Statement st = conn.createStatement();
+
+            ResultSet rs = null;
+            String sql = "SELECT * FROM ORDERLINEITEMS WHERE ORDERID=" + order.getOrderId();
+            rs = st.executeQuery(sql);
+
+            ArrayList<OrderLineItem> items = new ArrayList<OrderLineItem>();
+            while (rs.next()) {
+                OrderLineItem oli = new OrderLineItem();
+                oli.setId(rs.getInt("ID"));
+                oli.setItemId(rs.getInt("ITEMID"));
+                oli.setQuantity(rs.getInt("QUANTITY"));
+                oli.setOrderId(rs.getInt("ORDERID"));
+                items.add(oli);
+
+            }
+            order.setItems(items);
+            rs.close();
+            st.close();
+
+        } catch (SQLException ex) {
+            LOGGER.log( Level.SEVERE, "SQLException failed ! : " + ex);
+        }
     }
 
     /**
@@ -100,25 +128,25 @@ System.out.println("order repo 7");
     @Override
     public void write() {
         Statement st;
-        System.out.println("1");
         try {
             st = conn.createStatement();
+            // delete contents of ORDER table
             String sql = "DELETE FROM ORDERS";
+            st.executeUpdate(sql);
+            // DELETE CONTENTS OF ORDERLINEITEMS table
+            st = conn.createStatement();
+            sql = "DELETE FROM ORDERLINEITEMS";
             st.executeUpdate(sql);
 
             st.close();
         } catch (SQLException ex) {
-            System.out.println("SQLException error ");
+            LOGGER.log( Level.SEVERE, "SQLException error ");
         }
-        System.out.println("2");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         ArrayList<Order> orders = OrderList.getInstance().get();
-        System.out.println("3");
         for (Order order : orders) {
-            System.out.println("4");
             try {
                 st = conn.createStatement();
-                System.out.println("5");
                 String sql = "INSERT INTO ORDERS VALUES ("
                         + order.getOrderId() + ",";
                 if (order.getCollectDate() != null) {
@@ -160,14 +188,30 @@ System.out.println("order repo 7");
                             + "\"\"" + "' , '"
                             + "\"\"" + "')";
                 }
-                System.out.println("5.5");
-                System.out.println("SQL  =  " + sql);
                 st.executeUpdate(sql);
-                System.out.println("6");
+                
+                // update ORDERLINEITEMS table
+                st = conn.createStatement();
+                
+                for (OrderLineItem oli : order.getItems()) {
+                    LOGGER.log(Level.FINE,"SAving Items");
+                    LOGGER.log(Level.FINE,"getId : "+ oli.getId() );
+                    LOGGER.log(Level.FINE,"getItemId : " + oli.getItemId());
+                    LOGGER.log(Level.FINE,"getQuantity : " + oli.getQuantity());
+                    LOGGER.log(Level.FINE,"getOrderId : " + order.getOrderId());
+                    sql = "INSERT INTO ORDERLINEITEMS VALUES (" +
+                    oli.getId() + " , " +
+                    oli.getItemId() + " , " +
+                    oli.getQuantity() + " , " +
+                    order.getOrderId() + " ) ";
+                    
+                            
+                }
+                st.executeUpdate(sql);
                 st.close();
             } catch (SQLException ex) {
-                System.out.println("SQLException error ");
-                System.out.println(ex.getMessage());
+                LOGGER.log( Level.SEVERE, "SQLException error ");
+                LOGGER.log( Level.SEVERE, ex.getMessage());
             }
         }
 
